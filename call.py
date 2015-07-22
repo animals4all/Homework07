@@ -9,6 +9,9 @@ call.py - Telemarketing script that displays the next name
 
 """
 
+# Module to get current date
+import datetime
+
 # Load the customers from the passed filename
 # Return a dictionary containing the customer data
 #    (key = customer_id)
@@ -87,6 +90,33 @@ def main():
 			customer = customers.get(order.get('customer_id', 0), 0)
 			if customer.get('called', '') == '':
 				display_customer(customer)
+				
+				# The index of the customer's line in the file is the
+				# customer's ID
+				customer_file_index = int(customer['customer_id'])
+
+				# Get the current date and split into a list
+				current_date = str(datetime.date.today()).split("-")
+				year = current_date[0]
+				month = current_date[1]
+				day = current_date[2]
+
+				fo = open('customers.csv', 'r')
+				file_contents = fo.readlines()
+				fo.close()
+
+				# Remove the newline character from the end of the line
+				file_contents[customer_file_index] = file_contents[customer_file_index].rstrip("\n")
+
+				# Append the date to the customer's line in
+				# the 'customers.csv' file
+				file_contents[customer_file_index] += month + "/" + day + "/" + year + "\n"
+
+				# Write the altered contents back to the file
+				fo = open('customers.csv', 'w')
+				fo.writelines(file_contents)
+				fo.close()
+
 				break
 
 if __name__ == '__main__':
